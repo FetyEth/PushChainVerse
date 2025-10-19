@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState, useCallback } from "react";
+import { useAccount } from "wagmi";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Recipient {
   id: string;
@@ -17,71 +17,58 @@ export function useRecipients() {
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ 1️⃣ Move fetchRecipients OUTSIDE useEffect so we can call it later too
-  const fetchRecipients = async () => {
+  const fetchRecipients = useCallback(async () => {
     if (!address) return;
     setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("recipients")
+        .select("*")
+        .eq("user_address", address.toLowerCase())
+        .order("last_transaction_at", { ascending: false })
+        .limit(10);
 
-    const { data, error } = await supabase
-      .from('recipients')
-      .select('*')
-      .eq('user_address', address.toLowerCase())
-      .order('last_transaction_at', { ascending: false })
-      .limit(10);
-
-    if (error) {
-      console.error('Error fetching recipients:', error);
-    } else {
+      if (error) throw error;
       setRecipients(data || []);
-    }
-
-    setLoading(false);
-  };
-
-  // ✅ 2️⃣ Only trigger initial load from useEffect
-  useEffect(() => {
-    if (address) {
-      fetchRecipients();
-    } else {
-      setRecipients([]);
+    } catch (err) {
+      console.error("Error fetching recipients:", err);
+    } finally {
       setLoading(false);
     }
   }, [address]);
 
-  // ✅ 3️⃣ Now call fetchRecipients again after adding a new recipient
+  useEffect(() => {
+    fetchRecipients();
+  }, [fetchRecipients]);
+
   const addRecipient = async (recipientAddress: string, nickname?: string) => {
     if (!address) return;
+    try {
+      const { error } = await supabase.from("recipients").upsert(
+        {
+          user_address: address.toLowerCase(),
+          recipient_address: recipientAddress.toLowerCase(),
+          nickname: nickname || null,
+          last_transaction_at: new Date().toISOString(),
+        },
+        { onConflict: "user_address,recipient_address" }
+      );
 
-    const { error } = await supabase.from('recipients').upsert(
-      {
-        user_address: address.toLowerCase(),
-        recipient_address: recipientAddress.toLowerCase(),
-        nickname: nickname || null,
-        last_transaction_at: new Date().toISOString(),
-      },
-      { onConflict: 'user_address,recipient_address' }
-    );
-
-    if (error) {
-      console.error('Error adding recipient:', error);
-      alert('Failed to add recipient: ' + error.message);
-    } else {
-      await fetchRecipients(); // 🧠 refresh list after successful insert
+      if (error) throw error;
+      await fetchRecipients();
+    } catch (err) {
+      console.error("Error adding recipient:", err);
     }
   };
 
   const removeRecipient = async (recipientId: string) => {
-    const { error } = await supabase
-      .from('recipients')
-      .delete()
-      .eq('id', recipientId);
-
-    if (error) {
-      console.error('Error removing recipient:', error);
-      throw error;
+    try {
+      const { error } = await supabase.from("recipients").delete().eq("id", recipientId);
+      if (error) throw error;
+      setRecipients((prev) => prev.filter((r) => r.id !== recipientId));
+    } catch (err) {
+      console.error("Error removing recipient:", err);
     }
-
-    setRecipients((prev) => prev.filter((r) => r.id !== recipientId));
   };
 
   return { recipients, loading, addRecipient, removeRecipient };

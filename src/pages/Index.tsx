@@ -26,14 +26,14 @@ const Index = () => {
                     <Wallet className="h-10 w-10 text-white" />
                   </div>
                 </div>
-                <h2 className="text-3xl font-bold mb-3">Welcome to CrossFlow</h2>
+                <h2 className="text-3xl font-bold mb-3">Welcome to PushVerse</h2>
                 <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto">
-                  Connect your wallet to start sending cross-chain stablecoins with low fees across Africa
+                Seamless on-chain payments — from cross-border remittances to merchant transactions and DeFi innovation powered by PushChain.
                 </p>
                 <div className="flex justify-center gap-4">
                   <div className="text-center px-4">
-                    <p className="text-2xl font-bold gradient-primary bg-clip-text text-transparent">Base</p>
-                    <p className="text-xs text-muted-foreground mt-1">Ethereum L2</p>
+                    <p className="text-2xl font-bold gradient-primary bg-clip-text text-transparent">PushChain</p>
+                    <p className="text-xs text-muted-foreground mt-1">Multi-chain alerts</p>
                   </div>
                   <div className="text-center px-4">
                     <p className="text-2xl font-bold gradient-secondary bg-clip-text text-transparent">Celo</p>

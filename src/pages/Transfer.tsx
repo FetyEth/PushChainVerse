@@ -15,6 +15,8 @@ import { useTransactionTracker } from "@/hooks/useTransactionTracker";
 import { TOKEN_ADDRESSES, TOKEN_DECIMALS } from "@/lib/tokenAddresses";
 import { erc20Abi } from "@/lib/erc20Abi";
 
+import { RecipientAddressInput } from "@/components/RecipientAddressInput";
+
 const Transfer = () => {
   const { address, isConnected, chain } = useAccount();
   const [recipient, setRecipient] = useState("");
@@ -220,15 +222,11 @@ const Transfer = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="recipient">Recipient Address</Label>
-                    <Input
-                      id="recipient"
-                      placeholder="0x..."
-                      value={recipient}
-                      onChange={(e) => setRecipient(e.target.value)}
-                      className="font-mono"
-                    />
-                  </div>
+  <Label htmlFor="recipient">Recipient Address</Label>
+  <RecipientAddressInput value={recipient} onChange={setRecipient} />
+
+</div>
+
 
                   <div className="space-y-2">
                     <Label htmlFor="amount">Amount</Label>
@@ -297,3 +295,4 @@ const Transfer = () => {
 };
 
 export default Transfer;
+

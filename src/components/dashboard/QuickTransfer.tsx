@@ -105,10 +105,13 @@ export function QuickTransfer() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="PC">PC (Push Chain)</SelectItem>
               <SelectItem value="usdt">USDT - Tether</SelectItem>
               <SelectItem value="usdc">USDC - USD Coin</SelectItem>
               <SelectItem value="cusd">cUSD - Celo Dollar</SelectItem>
                <SelectItem value="CELO">CELO (Native - Celo)</SelectItem>
+
+
             </SelectContent>
           </Select>
         </div>
